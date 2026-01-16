@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>3GX Web Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+    <link href="/assets/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="logo">
+                <img src="assets/img/3GX DYNAMIC LOGO(WHITE).png" alt="Logo">
+            </div>
+        </div>
+    </header>
+
+    <main id="main">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-7 text-center">
+                    <img src="assets/img/LANDING PAGE IMG.png" alt="Login Image" class="img-fluid hero-img mb-4 a">
+
+                    <h1 class="display-6 fw-bold mb-3 text-lg-start">
+                        Easily Send and Track Your Quotation Requests
+                    </h1>
+
+                    <p class="mb-4 fs-5 text-lg-start">
+                        No more manual follow-ups — send, track, and manage your requests effortlessly
+                    </p>
+                </div>
+                <div class="col-lg-5 text-center">
+                    <h1 class="display-6 fw-bold mb-3">LOGIN</h1>
+                    <p class="mb-4 fs-6 text-muted">
+                        Please sign in with your designated username and password.
+                    </p>
+
+                    <form id="loginForm" style="max-width: 500px;" class="mx-auto">
+                        <div class="input-group mb-3 border border-secondary rounded mx-auto">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control" placeholder="Username" required>
+                        </div>
+
+                        <div class="input-group mb-3 border border-secondary rounded mx-auto">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control" placeholder="Password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-main w-75 py-2">
+                            Sign In
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Modal -->
+        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content feedback-bg-modal m-0 p-0">
+                    <div class="modal-body text-white small" style="word-wrap: break-word; white-space: normal;">
+                        <p id="feedbackMessage" class="mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer id="footer">
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-lg-5 col-md-6">
+                    <h5 class="footer-title">3GX SOLUTIONS</h5>
+                    <p>
+                        3GX is an independent business firm that specializes on Computer, I.T.
+                        Solutions & Services, Electronics, Telecom and Electrical products. 
+                    </p>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/Official3GXSolutions"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-envelope-fill"></i></a>
+                        <a href="https://www.3gxsolutions.com/"><i class="bi bi-link-45deg"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="footer-title">Stores</h5>
+                    <ul class="footer-links">
+                        <li><a href="#">3GX MAIN: Elias Angeles St., Dinaga, Naga City</a></li>
+                        <li><a href="#">3GX LEGAZPI: Quezon Ave. St., Legazpi City</a></li>
+                        <li><a href="#">3GX SORSOGON: Peralta St., Brgy. Polvorista, Sorsogon City</a></li>
+                        <li><a href="#">3GX TABACO: Riosa St., Tabaco City</a></li>
+                        <li><a href="#">3GX LEGAZPI: Quezon Ave. St., Legazpi City</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="footer-title">Contacts</h5>
+                    <ul class="footer-links">
+                        <li>GLOBE: 0977 440 9374</li>
+                        <li>TNT: 0951 155 6374</li>
+                        <li>SMART: 0998 952 2890</li>
+                        <li>NAGA: (054) 811-8455</li>
+                        <li>LEGAZPI: (052) 742-1842</li>
+                        <li>SORSOGON: (052) 201-1006</li>
+                        <li>TABACO: (052) 201-1006</li>
+                        <li>MANILA: 028-367-7849</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

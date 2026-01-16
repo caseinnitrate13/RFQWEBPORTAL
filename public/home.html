@@ -1,0 +1,184 @@
+<div class="container-fluid">
+  <div class="container py-5">
+    <div class="row align-items-center">
+
+      <div class="col-lg-6 text-center mb-4 mb-lg-0">
+        <img src="assets/img/LANDING PAGE IMG.png" alt="Landing Image" class="img-fluid">
+      </div>
+
+      <div class="col-lg-6 text-center text-lg-start">
+        <h1 class="display-6 fw-bold mb-3">Easily Send and Track Your Quotation Requests</h1>
+        <p class="mb-4 fs-5">
+          No more manual follow-ups — send, track, and manage your requests effortlessly
+        </p>
+        <div class="d-grid gap-3 button-wrap">
+          <a href="#" class="btn btn-main btn-lg" data-action="upload-rfq" data-modal="uploadRFQModal">
+            <i class="bi bi-upload me-2"></i> Upload Request for Quotation
+          </a>
+
+          <a href="#" class="btn btn-main btn-lg" data-action="scan-docu" data-modal="scanDocumentModal">
+            <i class="bi bi-camera me-2"></i> Scan Document
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Upload RFQ Home -->
+  <div class="modal fade" id="uploadRFQModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+        <form id="uploadAttachmentForm">
+          <div class="modal-header">
+            <h5 class="modal-title">Upload Attachment/s</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-4">
+              <label class="form-label">Choose file format:</label>
+
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-check">
+                    <input class="form-check-input fileTypeRadio border border-secondary" type="radio" name="fileType"
+                      id="formatPDF" value="pdf">
+                    <label class="form-check-label" for="formatPDF">PDF</label>
+                  </div>
+
+                  <div class="form-check">
+                    <input class="form-check-input fileTypeRadio border border-secondary" type="radio" name="fileType"
+                      id="formatDOCX" value="docx">
+                    <label class="form-check-label" for="formatDOCX">DOCX (Word)</label>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="form-check">
+                    <input class="form-check-input fileTypeRadio border border-secondary" type="radio" name="fileType"
+                      id="formatIMG" value="img">
+                    <label class="form-check-label" for="formatIMG">Images (PNG/JPG)</label>
+                  </div>
+
+                  <div class="form-check">
+                    <input class="form-check-input fileTypeRadio border border-secondary" type="radio" name="fileType"
+                      id="formatXLSX" value="xlsx">
+                    <label class="form-check-label" for="formatXLSX">XLS/XLSX (Excel)</label>
+                  </div>
+                </div>
+              </div>
+
+              <div id="fileTypeError" class="invalid-feedback d-none">
+                * Please select a file type first.
+              </div>
+            </div>
+
+            <div class="mb-4" id="dragWrapper">
+              <div class="border border-secondary rounded p-5 text-center"
+                style="background-color: #f8f9fa; cursor: pointer;" id="dragDropArea">
+                <i class="bi bi-upload" style="font-size: 2rem;"></i>
+                <p class="mt-2 mb-0 fst-italic text-muted">Drag & Drop your files here or click to
+                  select</p>
+                <input type="file" name="files[]" id="fileInput" multiple class="form-control d-none">
+              </div>
+            </div>
+
+            <div id="filePreview" class="list-group"></div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-warning" id="addFileBtn">
+              <i class="bi bi-plus-circle me-1"></i> Add File
+            </button>
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scan Document Modal -->
+  <div class="modal fade" id="scanDocumentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+        <form id="scanDocumentForm">
+          <div class="modal-header">
+            <h5 class="modal-title">Scan Document</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body">
+            <p class="mb-2 text-muted small">
+              <i class="bi bi-lightbulb-fill text-warning me-1"></i>
+              Tip: Take photos in good lighting, with a clean background and flat surface.
+            </p>
+            <div id="scanFilePreview" class="list-group mb-2" style="max-height: 400px; overflow-y: auto;">
+              <div id="scanPreviewPlaceholder" class="border border-secondary rounded p-5 text-center"
+                style="background-color: #f8f9fa; cursor: pointer;">
+                <p class="mb-1 fst-italic text-muted">The scanned images will be shown here</p>
+              </div>
+            </div>
+            <input type="file" accept="image/*" capture="environment" id="scanFileInput" class="d-none">
+          </div>
+
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-warning" id="scanBtn">
+              <i class="bi bi-camera me-1"></i> Scan
+            </button>
+            <button type="submit" class="btn btn-primary">Submit Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="cropScanModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+    data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Adjust Scan</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body px-3 py-3">
+          <p class="mb-2 text-muted small">
+            <i class="bi bi-lightbulb-fill text-warning me-1"></i>
+            Tip: Adjust the corners to properly crop your document for the best result.
+          </p>
+          <div class="position-relative">
+            <canvas id="scanCanvas" style="width: 100%; height: auto; display: block;"></canvas>
+
+            <div class="corner tl"></div>
+            <div class="corner tr"></div>
+            <div class="corner br"></div>
+            <div class="corner bl"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-success" id="applyCropBtn">
+            <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+            Apply Crop
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Feedback Modal -->
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content feedback-bg-modal m-0 p-0">
+        <div class="modal-body text-white small" style="word-wrap: break-word; white-space: normal;">
+          <p id="feedbackMessage" class="mb-0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

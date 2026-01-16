@@ -1,0 +1,314 @@
+<div class="container-fluid">
+  <h3 class="fw-bold">Responded Requests for Quotation</h3>
+  <p>This section shows the list of all the submitted requests for quotation.</p>
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title"></h5>
+
+            <div class="input-group mb-3 search-wrapper">
+              <input type="text" id="searchA" class="form-control bg-light small border border-secondary"
+                placeholder="Search by request date">
+              <span class="input-group-text bg-light border border-secondary">
+                <i class="bi bi-search"></i>
+              </span>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="d-flex align-items-center">
+                <button type="button" title="Click to filter status" class="btn btn-quoted btn-md me-2 status-btn"
+                  data-status="Quoted">
+                  Quoted
+                </button>
+                <button type="button" title="Click to filter status" class="btn btn-approved btn-md me-2 status-btn"
+                  data-status="Approved">
+                  Approved
+                </button>
+                <button type="button" title="Click to filter status" class="btn btn-declined btn-md me-2 status-btn"
+                  data-status="Declined">
+                  Declined
+                </button>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center mb-2">
+              <label for="entriesSelect" class="me-2 mb-0">Show</label>
+              <select id="entriesSelect" class="form-select form-select-sm me-2" style="width: auto;">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+              <span>entries</span>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover" id="respondedRfqTable">
+                <thead class="thead-check table-light text-center">
+                  <tr>
+                    <th style="width: 120px;">Request Date</th>
+                    <th style="width: 150px;">RFQ Attachment</th>
+                    <th style="width: 120px;">Quotation Date</th>
+                    <th style="width: 150px;">Quotation Attachment</th>
+                    <th>Quotation Status</th>
+                    <th>Remarks</th>
+                    <th style="width: 150px;">Action</th>
+                    <th style="width: 150px;">Purchase Order Attachment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>September 18, 2025</td>
+                    <td>
+                      <a href="#" class="btn btn-sm btn-view" data-action="view-attachment" data-files='[
+                          {"name":"Quotation.pdf","url":"assets/img/A1 CHRISTMAS PARTY.docx"}
+                        ]' data-modal="seeAttachmentModal">
+                        View Attachment
+                      </a>
+                    </td>
+                    <td>September 18, 2025</td>
+                    <td>
+                      <a href="#" class="btn btn-sm btn-view" data-action="view-quotation" data-files='[
+                        {"name":"Quotation.pdf","url":"assets/img/A1 CHRISTMAS PARTY.docx"}
+                        ]' data-modal="seeQuotationModal">
+                        View Attachment
+                      </a>
+                    </td>
+                    <td>Quoted</td>
+                    <td>For review by procurement</td>
+                    <td>
+                      <a href="#" class="btn btn-sm btn-view" data-action="upload-po" data-modal="uploadPOModal">
+                        <i class="bi bi-upload me-2"></i>
+                        Upload PO
+                      </a>
+                    </td>
+                    <td>
+                      <a href="#" class="btn btn-sm btn-view" data-action="view-po" data-files='[
+                          {"name":"Quotation.pdf","url":"assets/img/A1 CHRISTMAS PARTY.docx"},
+                          {"name":"Quotation.pdf","url":"assets/img/A1 CHRISTMAS PARTY.docx"}
+                        ]' data-modal="poAttachmentModal">
+                        View Attachment
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+
+              <div class="d-flex align-items-center">
+                <label for="entriesSelect" class="me-2 mb-0">Show</label>
+                <select id="entriesSelect" class="form-select form-select-sm me-2" style="width: auto;">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+                <span>entries</span>
+              </div>
+
+              <div class="d-flex align-items-center gap-1">
+                <button class="btn btn-outline-secondary btn-sm" id="prevBtn">Previous</button>
+                <div id="paginationNumbers" class="d-flex gap-1"></div>
+                <button class="btn btn-outline-secondary btn-sm" id="nextBtn">Next</button>
+              </div>
+
+            </div>
+
+            <div id="loadingSpinner" style="display: none; text-align: center;">
+              <div class="spinner-border" role="status">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- View RFQ Attachment Modal -->
+  <div class="modal fade" id="seeAttachmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+        <form id="seeAttachmentForm">
+          <div class="modal-header">
+            <h5 class="modal-title">RFQ Attachment/s</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="seefilePreview list-group"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Quotation Modal -->
+  <div class="modal fade" id="seeQuotationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+        <form id="seeAttachmentForm">
+          <div class="modal-header">
+            <h5 class="modal-title">Quotation Attachment/s</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="seefilePreview list-group"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-forrevision" data-action="quotation-revision">
+              Request Revision
+            </button>
+
+            <button type="button" class="btn btn-declined" data-action="quotation-decline">
+              Decline
+            </button>
+
+            <button type="button" class="btn btn-approved" data-action="quotation-approve">
+              Approve
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirming Action for Approval or Requesting Revision -->
+  <div class="modal fade" id="quotationActionModal" tabindex="-1">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="quotationActionTitle">Confirm Action</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p id="quotationActionMessage" class="mb-3"></p>
+
+          <div class="mb-3">
+            <label class="form-label">Remarks</label>
+            <textarea class="form-control" id="quotationActionRemarks" rows="3"
+              placeholder="Enter remarks (optional)"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary" id="confirmQuotationActionBtn">
+            Yes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--Upload PO  -->
+  <div class="modal fade" id="uploadPOModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+        <form id="uploadAttachmentForm">
+          <div class="modal-header">
+            <h5 class="modal-title">Upload Attachment/s</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body">
+            <div class="mb-4">
+              <label class="form-label">Choose file format:</label>
+
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-check">
+                    <input class="form-check-input fileTypeRadio border border-secondary" type="radio" name="fileType"
+                      id="formatPDF" value="pdf">
+                    <label class="form-check-label" for="formatPDF">PDF</label>
+                  </div>
+
+                  <div class="form-check">
+                    <input class="form-check-input fileTypeRadio border border-secondary" type="radio" name="fileType"
+                      id="formatDOCX" value="docx">
+                    <label class="form-check-label" for="formatDOCX">DOCX (Word)</label>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="form-check">
+                    <input class="form-check-input fileTypeRadio border border-secondary" type="radio" name="fileType"
+                      id="formatIMG" value="img">
+                    <label class="form-check-label" for="formatIMG">Images (PNG/JPG)</label>
+                  </div>
+
+                  <div class="form-check">
+                    <input class="form-check-input fileTypeRadio border border-secondary" type="radio" name="fileType"
+                      id="formatXLSX" value="xlsx">
+                    <label class="form-check-label" for="formatXLSX">XLS/XLSX (Excel)</label>
+                  </div>
+                </div>
+              </div>
+
+              <div id="fileTypeError" class="invalid-feedback d-none">
+                * Please select a file type first.
+              </div>
+            </div>
+
+            <div class="mb-4" id="dragWrapper">
+              <div class="border border-secondary rounded p-5 text-center"
+                style="background-color: #f8f9fa; cursor: pointer;" id="dragDropArea">
+                <i class="bi bi-upload" style="font-size: 2rem;"></i>
+                <p class="mt-2 mb-0 fst-italic text-muted">Drag & Drop your files here or click to
+                  select</p>
+                <input type="file" name="files[]" id="fileInput" multiple class="form-control d-none">
+              </div>
+            </div>
+
+            <div id="filePreview" class="list-group"></div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-warning" id="addFileBtn">
+              <i class="bi bi-plus-circle me-1"></i> Add File
+            </button>
+            <button type="submit" class="btn btn-primary">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- View PO Attachment Modal -->
+  <div class="modal fade" id="poAttachmentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+      <div class="modal-content">
+        <form id="poAttachmentForm">
+          <div class="modal-header">
+            <h5 class="modal-title">Purchase Order Attachment/s</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="seefilePreview list-group"></div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feedback Modal -->
+  <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content feedback-bg-modal m-0 p-0">
+        <div class="modal-body text-white small" style="word-wrap: break-word; white-space: normal;">
+          <p id="feedbackMessage" class="mb-0"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

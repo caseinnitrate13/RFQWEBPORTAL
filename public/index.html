@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>3GX Web Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+    <link href="/assets/css/style.css" rel="stylesheet">
+
+    <script src="https://unpkg.com/perspective-transform@1.1.3/dist/perspective-transform.min.js"></script>
+
+</head>
+
+<body>
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="logo">
+                <img src="assets/img/3GX DYNAMIC LOGO(WHITE).png" alt="Logo">
+            </div>
+        </div>
+    </header>
+
+    <main id="main">
+        <div class="container py-5">
+            <div class="row align-items-center">
+
+                <div class="col-lg-6 text-center mb-4 mb-lg-0">
+                    <img src="assets/img/LANDING PAGE IMG.png" alt="Landing Image" class="img-fluid">
+                </div>
+
+                <div class="col-lg-6 text-center text-lg-start">
+                    <h1 class="display-6 fw-bold mb-3">Easily Send and Track Your Quotation Requests</h1>
+                    <p class="mb-4 fs-5">
+                        No more manual follow-ups — send, track, and manage your requests effortlessly
+                    </p>
+                    <div class="d-grid gap-3 button-wrap">
+                        <a href="#" class="btn btn-main btn-lg" data-bs-toggle="modal" data-bs-target="#uploadRFQModal">
+                            <i class="bi bi-upload me-2"></i> Upload Request for Quotation
+                        </a>
+
+                        <a href="#" class="btn btn-main btn-lg" data-bs-toggle="modal" data-bs-target="#scanRFQModal">
+                            <i class="bi bi-camera me-2"></i> Scan Document
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload RFQ Modal -->
+        <div class="modal fade" id="uploadRFQModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <form id="uploadRFQForm" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title">Upload Request for Quotation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p class="text-muted mb-3" style="font-size:16px;">
+                                Kindly ensure all required information is entered before submitting.
+                            </p>
+                            <div class="row g-3">
+                                <!-- Left Column -->
+                                <div class="col-12 col-lg-6">
+                                    <!-- Name -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                            <input type="text" name="name" class="form-control" placeholder="Name"
+                                                required pattern="^[A-Za-z. ]+$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Name must contain only letters and periods.
+                                        </div>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" name="email" class="form-control" placeholder="Email"
+                                                required pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Email e.g johndoe@gmail.com
+                                        </div>
+                                    </div>
+
+                                    <!-- Contact Number -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                            <input type="text" name="contact" class="form-control"
+                                                placeholder="Contact Number" required pattern="^\+63\d{10}$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Contact must start with +63 and contain only numbers.
+                                        </div>
+                                    </div>
+
+                                    <!-- Department -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                            <input type="text" name="department" class="form-control"
+                                                placeholder="Department" pattern="^[A-Za-z ]*$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Department must contain only letters.
+                                        </div>
+                                    </div>
+
+                                    <!-- Position -->
+                                    <div>
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                            <input type="text" name="position" class="form-control"
+                                                placeholder="Position" pattern="^[A-Za-z ]*$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Position must contain only letters.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column -->
+                                <div class="col-12 col-lg-6">
+                                    <!-- Institution -->
+                                    <div class="mb-3 mt-0">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                            <select name="institution" class="form-select" required>
+                                                <option value="">Select Institution</option>
+                                                <option>Private Institution</option>
+                                                <option>Public Institution</option>
+                                            </select>
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Please select an institution.
+                                        </div>
+                                    </div>
+
+                                    <!-- Organization Name -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                            <input type="text" name="organization_name" class="form-control"
+                                                placeholder="Organization Name" pattern="^[A-Za-z ]*$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Organization name must contain only letters.
+                                        </div>
+                                    </div>
+
+                                    <!-- Organization Address -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                            <input type="text" name="organization_address" class="form-control"
+                                                placeholder="Organization Address" pattern="^[A-Za-z0-9., ]*$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Address must contain only letters, numbers, periods, and commas.
+                                        </div>
+                                    </div>
+
+                                    <!-- Attachments -->
+                                    <div class="mb-3" id="attachmentPreviewWrapper">
+                                        <label class="form-label">Please upload your attachment/s here:</label>
+                                        <a id="uploadAttachmentBtn" class="btn btn-main btn-md w-100">
+                                            <i class="bi bi-upload me-2"></i> Upload Attachment/s
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-main" data-bs-toggle="modal"
+                                data-bs-target="#rfqStatusModal">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Attachment Modal -->
+        <div class="modal fade" id="uploadAttachmentModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <form id="uploadAttachmentForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Upload Attachment/s</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="mb-4">
+                                <label class="form-label">Choose file format:</label>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input fileTypeRadio border border-secondary"
+                                                type="radio" name="fileType" id="formatPDF" value="pdf">
+                                            <label class="form-check-label" for="formatPDF">PDF</label>
+                                        </div>
+
+                                        <div class="form-check">
+                                            <input class="form-check-input fileTypeRadio border border-secondary"
+                                                type="radio" name="fileType" id="formatDOCX" value="docx">
+                                            <label class="form-check-label" for="formatDOCX">DOCX (Word)</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input fileTypeRadio border border-secondary"
+                                                type="radio" name="fileType" id="formatIMG" value="img">
+                                            <label class="form-check-label" for="formatIMG">Images (PNG/JPG)</label>
+                                        </div>
+
+                                        <div class="form-check">
+                                            <input class="form-check-input fileTypeRadio border border-secondary"
+                                                type="radio" name="fileType" id="formatXLSX" value="xlsx">
+                                            <label class="form-check-label" for="formatXLSX">XLS/XLSX (Excel)</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="fileTypeError" class="invalid-feedback d-none">
+                                    * Please select a file type first.
+                                </div>
+                            </div>
+
+                            <div class="mb-4" id="dragWrapper">
+                                <div class="border border-secondary rounded p-5 text-center"
+                                    style="background-color: #f8f9fa; cursor: pointer;" id="dragDropArea">
+                                    <i class="bi bi-upload" style="font-size: 2rem;"></i>
+                                    <p class="mt-2 mb-0 fst-italic text-muted">Drag & Drop your files here or click to
+                                        select</p>
+                                    <input type="file" name="files[]" id="fileInput" multiple
+                                        class="form-control d-none">
+                                </div>
+                            </div>
+
+                            <div id="filePreview" class="list-group"></div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-warning" id="addFileBtn">
+                                <i class="bi bi-plus-circle me-1"></i> Add File
+                            </button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scan RFQ Modal -->
+        <div class="modal fade" id="scanRFQModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <form id="scanRFQForm" novalidate>
+                        <div class="modal-header">
+                            <h5 class="modal-title">Scan Document</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p class="text-muted mb-3" style="font-size:16px;">
+                                Kindly ensure all required information is entered before submitting.
+                            </p>
+                            <div class="row g-3">
+                                <!-- Left Column -->
+                                <div class="col-12 col-lg-6">
+                                    <!-- Name -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                            <input type="text" name="name" class="form-control" placeholder="Name"
+                                                required pattern="^[A-Za-z. ]+$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Name must contain only letters and periods.
+                                        </div>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                            <input type="email" name="email" class="form-control" placeholder="Email"
+                                                required pattern="^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Email must contain only letters, numbers, and "@"
+                                        </div>
+                                    </div>
+
+                                    <!-- Contact Number -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                            <input type="text" name="contact" class="form-control"
+                                                placeholder="Contact Number" required pattern="^\+63\d{10}$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Contact must start with +63 and contain only numbers.
+                                        </div>
+                                    </div>
+
+                                    <!-- Department -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                            <input type="text" name="department" class="form-control"
+                                                placeholder="Department" pattern="^[A-Za-z ]*$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Department must contain only letters.
+                                        </div>
+                                    </div>
+
+                                    <!-- Position -->
+                                    <div>
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                            <input type="text" name="position" class="form-control"
+                                                placeholder="Position" pattern="^[A-Za-z ]*$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Position must contain only letters.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column -->
+                                <div class="col-12 col-lg-6">
+                                    <!-- Institution -->
+                                    <div class="mb-3 mt-0">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                            <select name="institution" class="form-select" required>
+                                                <option value="">Select Institution</option>
+                                                <option>Private Institution</option>
+                                                <option>Public Institution</option>
+                                            </select>
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Please select an institution.
+                                        </div>
+                                    </div>
+
+                                    <!-- Organization Name -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                            <input type="text" name="organization_name" class="form-control"
+                                                placeholder="Organization Name" pattern="^[A-Za-z ]*$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Organization name must contain only letters.
+                                        </div>
+                                    </div>
+
+                                    <!-- Organization Address -->
+                                    <div class="mb-3">
+                                        <div class="input-group border border-secondary rounded">
+                                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                            <input type="text" name="organization_address" class="form-control"
+                                                placeholder="Organization Address" pattern="^[A-Za-z0-9., ]*$">
+                                        </div>
+                                        <div class="invalid-feedback d-none mt-1">
+                                            * Address must contain only letters, numbers, periods, and commas.
+                                        </div>
+                                    </div>
+
+                                    <!-- Scan Document Button -->
+                                    <div class="mb-3">
+                                        <div id="scanRFQPreviewWrapper" class="mt-2">
+                                            <label class="form-label">Please scan your document/s here:</label>
+                                            <a id="openScanModalBtn" class="btn btn-main btn-md w-100">
+                                                <i class="bi bi-camera me-2"></i> Scan Document
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-main" data-bs-toggle="modal"
+                                data-bs-target="#rfqStatusModal">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scan Document Modal -->
+        <div class="modal fade" id="scanDocumentModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-md modal-dialog-centered">
+                <div class="modal-content">
+                    <form id="scanDocumentForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Scan Document</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <p class="mb-2 text-muted small">
+                                <i class="bi bi-lightbulb-fill text-warning me-1"></i>
+                                Tip: Take photos in good lighting, with a clean background and flat surface.
+                            </p>
+                            <div id="scanFilePreview" class="list-group mb-2"
+                                style="max-height: 400px; overflow-y: auto;">
+                                <div id="scanPreviewPlaceholder" class="border border-secondary rounded p-5 text-center"
+                                    style="background-color: #f8f9fa; cursor: pointer;">
+                                    <p class="mb-1 fst-italic text-muted">The scanned images will be shown here</p>
+                                </div>
+                            </div>
+                            <input type="file" accept="image/*" capture="environment" id="scanFileInput" class="d-none">
+                        </div>
+
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-warning" id="scanBtn">
+                                <i class="bi bi-camera me-1"></i> Scan
+                            </button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="cropScanModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static"
+            data-bs-keyboard="false">
+            <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Adjust Scan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body px-3 py-3">
+                        <p class="mb-2 text-muted small">
+                            <i class="bi bi-lightbulb-fill text-warning me-1"></i>
+                            Tip: Adjust the corners to properly crop your document for the best result.
+                        </p>
+                        <div class="position-relative">
+                            <canvas id="scanCanvas" style="width: 100%; height: auto; display: block;"></canvas>
+
+                            <div class="corner tl"></div>
+                            <div class="corner tr"></div>
+                            <div class="corner br"></div>
+                            <div class="corner bl"></div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button class="btn btn-success" id="applyCropBtn">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" role="status"
+                                aria-hidden="true"></span>
+                            Apply Crop
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Feedback Modal -->
+        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-hidden="true" >
+            <div class="modal-dialog modal-sm modal-dialog-centered">
+                <div class="modal-content feedback-bg-modal m-0 p-0">
+                    <div class="modal-body text-white small" style="word-wrap: break-word; white-space: normal;">
+                        <p id="feedbackMessage" class="mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RFQ Status Modal -->
+        <div class="modal fade" id="rfqStatusModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header py-2">
+                        <h5 class="modal-title">Request for Quotation Status</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center py-2">
+                        <div class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size: 3.5rem;"></i>
+                        </div>
+                        <p class="fs-6 mb-1 fw-bold">Thank you for submitting your Request for Quotation!</p>
+                        <p class="text-muted mb-1">We’ve received your details and will review them shortly.</p>
+                        <p class="text-muted mb-3">You’ll be updated via <span class="fw-bold">SMS</span> or <span
+                                class="fw-bold">email</span> once your quotation is ready.</p>
+                    </div>
+                    <div class="modal-footer justify-content-end py-2">
+                        <button type="button" id="rfqStatusOkBtn" class="btn btn-success px-3" data-bs-dismiss="modal">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer id="footer">
+        <div class="container-fluid py-4">
+            <div class="row">
+                <div class="col-lg-5 col-md-12 mb-4">
+                    <h5 class="footer-title">3GX SOLUTIONS</h5>
+                    <p>
+                        3GX is an independent business firm that specializes on Computer, I.T.
+                        Solutions & Services, Electronics, Telecom and Electrical products.
+                    </p>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/Official3GXSolutions"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-envelope-fill"></i></a>
+                        <a href="https://www.3gxsolutions.com/"><i class="bi bi-link-45deg"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-12">
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <h5 class="footer-title">Stores</h5>
+                            <ul class="footer-links">
+                                <li><a href="#">3GX MAIN: Elias Angeles St., Dinaga, Naga City</a></li>
+                                <li><a href="#">3GX LEGAZPI: Quezon Ave. St., Legazpi City</a></li>
+                                <li><a href="#">3GX SORSOGON: Peralta St., Brgy. Polvorista, Sorsogon City</a></li>
+                                <li><a href="#">3GX TABACO: Riosa St., Tabaco City</a></li>
+                                <li><a href="#">3GX LEGAZPI: Quezon Ave. St., Legazpi City</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <h5 class="footer-title">Contacts</h5>
+                            <ul class="footer-links">
+                                <li>GLOBE: 0977 440 9374</li>
+                                <li>TNT: 0951 155 6374</li>
+                                <li>SMART: 0998 952 2890</li>
+                                <li>NAGA: (054) 811-8455</li>
+                                <li>LEGAZPI: (052) 742-1842</li>
+                                <li>SORSOGON: (052) 201-1006</li>
+                                <li>TABACO: (052) 201-1006</li>
+                                <li>MANILA: 028-367-7849</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/perspective-transform@1.1.3/dist/perspective-transform.min.js"></script>
+
+    <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
