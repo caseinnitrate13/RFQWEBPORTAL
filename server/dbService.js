@@ -49,7 +49,7 @@ function createCanvasser(data, callback) {
             data.email,
             data.contact_number,
             data.department,
-            data.position, 
+            data.position,
             data.date_added
         ],
         callback
@@ -76,7 +76,6 @@ function createRequest(data, callback) {
     );
 }
 
-
 function generateYearlyID(prefix, table, column, callback) {
     const year = new Date().getFullYear();
     const datePrefix = `${prefix}${year}-`;
@@ -98,10 +97,118 @@ function generateYearlyID(prefix, table, column, callback) {
     });
 }
 
+function searchOrganizations(searchTerm, callback) {
+    const sql = `
+        SELECT 
+            org_id,
+            org_name,
+            org_address,
+            institution_type
+        FROM organizations
+        WHERE org_name LIKE ?
+        ORDER BY org_name ASC
+        LIMIT 10
+    `;
+    connection.query(sql, [`%${searchTerm}%`], callback);
+}
+
+function findSimilarRFQ(data, callback) {
+    const sql = `
+        SELECT 
+            r.rfq_id,
+            r.rfq_date,
+            c.canvasser_id,
+            c.canvasser_name,
+            c.email,
+            c.contact_number,
+            c.department,
+            c.position,
+            c.date_added,
+            o.org_id,
+            o.org_name,
+            o.org_address,
+            o.institution_type
+        FROM requests r
+        JOIN canvassers c ON r.canvasser_id = c.canvasser_id
+        JOIN organizations o ON c.organization_id = o.org_id
+        WHERE
+            o.org_name = ?
+            AND c.canvasser_name = ?
+        ORDER BY r.rfq_date DESC
+        LIMIT 1
+    `;
+
+    connection.query(
+        sql,
+        [data.organization_name, data.name],
+        callback
+    );
+}
+
+function getCanvasserIDByRFQ(rfq_id) {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT canvasser_id
+            FROM requests
+            WHERE rfq_id = ?
+            LIMIT 1
+        `;
+        connection.query(sql, [rfq_id], (err, results) => {
+            if (err) return reject(err);
+            if (results.length === 0) return reject(new Error('RFQ not found'));
+            resolve(results[0].canvasser_id);
+        });
+    });
+}
+
+function appendRequestAttachments(rfq_id, newAttachments, callback) {
+    const sql = `
+        UPDATE requests
+        SET rfq_attachment = JSON_MERGE_PATCH(
+            IFNULL(rfq_attachment, '{}'),
+            ?
+        )
+        WHERE rfq_id = ?
+    `;
+    connection.query(sql, [JSON.stringify(newAttachments), rfq_id], callback);
+}
+
+
+function updateCanvasserByRFQ(rfq_id, data, callback) {
+    const sql = `
+        UPDATE canvassers c
+        JOIN requests r ON r.canvasser_id = c.canvasser_id
+        SET
+            c.canvasser_name = ?,
+            c.email = ?,
+            c.contact_number = ?,
+            c.department = ?,
+            c.position = ?
+        WHERE r.rfq_id = ?
+    `;
+    connection.query(
+        sql,
+        [
+            data.canvasser_name,
+            data.email,
+            data.contact_number,
+            data.department,
+            data.position,
+            rfq_id
+        ],
+        callback
+    );
+}
+
 module.exports = {
     connection,
     createOrganization,
     createCanvasser,
     createRequest,
-    generateYearlyID
+    generateYearlyID,
+    searchOrganizations,
+    findSimilarRFQ,
+    appendRequestAttachments,
+    updateCanvasserByRFQ,
+    getCanvasserIDByRFQ
 };

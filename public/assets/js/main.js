@@ -385,6 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, { once: true });
     }
 
+    // Auto detection of edges
     function detectPaperEdges(imgObj) {
         const DETECT_MAX_SIZE = 1000;
         const scale = Math.min(DETECT_MAX_SIZE / imgObj.width, DETECT_MAX_SIZE / imgObj.height, 1);
@@ -747,17 +748,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
     rebindScanButton();
 
-    document.querySelectorAll('[data-bs-target="#rfqStatusModal"]').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            const form = e.target.closest('.modal-content').querySelector('form');
+    document.querySelectorAll('.submit-rfq-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+
+            const modalEl = e.target.closest('.modal');
+            const form = modalEl.querySelector('form');
+
             if (!form.checkValidity()) {
                 form.classList.add('was-validated');
+                showFeedback(`⚠️ Please fill out all required fields and correct sany errors highlighted.`);
+                return;
+            }
+
+            const hasUploads =
+                typeof savedFilesArray !== 'undefined' &&
+                savedFilesArray.length > 0;
+
+            const hasScans =
+                typeof scannedPages !== 'undefined' &&
+                scannedPages.length > 0;
+
+            if (!hasUploads && !hasScans) {
+                showFeedback(`⚠️ Please upload or scan at least one document before submitting.`);
                 return;
             }
 
             const formData = new FormData(form);
 
-            if (savedFilesArray.length > 0) {
+            if (hasUploads) {
                 savedFilesArray.forEach(file => {
                     formData.append(
                         'rfq_attachments',
@@ -767,65 +785,200 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             }
 
-            if (typeof scannedPages !== 'undefined' && scannedPages.length > 0) {
+            if (hasScans) {
                 scannedPages.forEach((page, index) => {
-                    formData.append('rfq_attachments', dataURLtoBlob(page.src), `attachment_${index + 1}.jpg`);
+                    formData.append(
+                        'rfq_attachments',
+                        dataURLtoBlob(page.src),
+                        `attachment_${index + 1}.jpg`
+                    );
                 });
             }
 
             try {
-                const res = await fetch('/submit-rfq', {
+                const formJSON = Object.fromEntries(new FormData(form));
+                const checkRes = await fetch('/check-existing-rfq', {
                     method: 'POST',
-                    body: formData
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formJSON)
                 });
 
-                const data = await res.json();
-                if (!data.success) {
-                    alert(data.message);
-                    console.log(data.message);
-                } else {
-                    form.reset();
-                    form.classList.remove('was-validated');
+                const checkData = await checkRes.json();
 
-                    const uploadForm = document.getElementById("uploadAttachmentForm");
-                    if (uploadForm) uploadForm.reset();
+                if (checkData.matchType !== 'NONE') {
+                    showConflictModal(
+                        checkData.matchType,
+                        checkData.existingRFQ,
+                        (action) => {
+                            formData.append('conflict_action', action);
+                            formData.append('existing_rfq_id', checkData.rfq_id);
+                            submitRFQ(formData, modalEl);
+                        }
+                    );
 
-                    savedFilesArray = [];
-                    filesArray = [];
-                    if (typeof scannedPages !== 'undefined') scannedPages = [];
-
-                    const attachmentWrapper = document.getElementById("attachmentPreviewWrapper");
-                    if (attachmentWrapper) {
-                        attachmentWrapper.innerHTML = `
-                        <label class="form-label">Please upload your attachment/s here:</label>
-                        <a id="uploadAttachmentBtn" class="btn btn-main btn-md w-100">
-                            <i class="bi bi-upload me-2"></i> Upload Attachment/s
-                        </a>
-                    `;
-                        rebindUploadButton();
-                    }
-
-                    // Reset scan preview
-                    const scanWrapper = document.getElementById("scanRFQPreviewWrapper");
-                    if (scanWrapper) {
-                        scanWrapper.innerHTML = `
-                        <label class="form-label">Please scan your document/s here:</label>
-                        <a id="openScanModalBtn" class="btn btn-main btn-md w-100">
-                            <i class="bi bi-camera me-2"></i> Scan Document
-                        </a>
-                    `;
-                        rebindScanButton();
-                    }
-
-                    // Close the RFQ modal
-                    e.target.closest('.modal').querySelector('.btn-close').click();
+                    return;
                 }
+                await submitRFQ(formData, modalEl);
+
             } catch (err) {
                 console.error(err);
                 alert('An error occurred while submitting the request.');
             }
         });
     });
+
+    function showConflictModal(type, existingRFQ, onConfirm) {
+        const modalEl = document.getElementById('rfqConflictModal');
+        const modal = new bootstrap.Modal(modalEl, {
+            backdrop: true,
+            focus: true
+        });
+
+        modal.show();
+
+        modalEl.style.zIndex = 1060;
+
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        if (backdrops.length) {
+            backdrops[backdrops.length - 1].style.zIndex = 1055;
+        }
+
+        const title = document.getElementById('conflictTitle');
+        const body = document.getElementById('conflictBody');
+        const primary = document.getElementById('conflictPrimaryBtn');
+        const secondary = document.getElementById('conflictSecondaryBtn');
+
+        const formatDate = (date) =>
+            new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+        const detailsHTML = `
+        <div class="mb-3">
+            <strong>Existing RFQ Details</strong>
+            <ul class="list-unstyled mt-2 small">
+                <li><strong>Date Created:</strong> ${formatDate(existingRFQ.date_added)}</li>
+                <li><strong>Canvasser Name:</strong> ${existingRFQ.canvasser_name}</li>
+                <li><strong>Email:</strong> ${existingRFQ.email}</li>
+                <li><strong>Organization:</strong> ${existingRFQ.org_name}</li>
+                <li><strong>Address:</strong> ${existingRFQ.org_address}</li>
+            </ul>
+        </div>
+        <hr>
+    `;
+
+        let primaryAction, secondaryAction;
+
+        if (type === 'ALL_SAME') {
+            title.innerText = 'Existing Request Found';
+
+            body.innerHTML = `
+            ${detailsHTML}
+            <p>
+                The details you entered exactly match an existing request.
+                What would you like to do?
+            </p>
+            <ol>
+                <li>Link your attachments to this request</li>
+                <li>Keep existing details and submit a new RFQ</li>
+            </ol>
+        `;
+
+            primary.innerText = 'Link Attachments';
+            secondary.innerText = 'Create New';
+
+            primaryAction = 'ALL_SAME_LINK';
+            secondaryAction = 'ALL_SAME_NEW';
+        } else {
+            title.innerText = 'Similar Request Found';
+
+            body.innerHTML = `
+            ${detailsHTML}
+            <p>
+                Some details are different from what’s saved in the system.
+                What would you like to do?
+            </p>
+            <ol>
+                <li>Update existing details and submit a new RFQ</li>
+                <li>Submit a new RFQ with new details</li>
+            </ol>
+        `;
+
+            primary.innerText = 'Update Existing';
+            secondary.innerText = 'Submit New';
+
+            primaryAction = 'PARTIAL_UPDATE';
+            secondaryAction = 'PARTIAL_NEW';
+        }
+
+        primary.onclick = () => {
+            modal.hide();
+            onConfirm(primaryAction);
+        };
+
+        secondary.onclick = () => {
+            modal.hide();
+            onConfirm(secondaryAction);
+        };
+
+        modal.show();
+    }
+
+    async function submitRFQ(formData, modalEl) {
+        const res = await fetch('/submit-rfq', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+            alert(data.message);
+            return;
+        }
+
+        bootstrap.Modal.getInstance(modalEl).hide();
+        resetRFQForms();
+
+        new bootstrap.Modal(
+            document.getElementById('rfqStatusModal')
+        ).show();
+    }
+
+    function resetRFQForms() {
+        document.querySelectorAll('form').forEach(form => {
+            form.reset();
+            form.classList.remove('was-validated');
+        });
+
+        savedFilesArray = [];
+        filesArray = [];
+        if (typeof scannedPages !== 'undefined') scannedPages = [];
+
+        const attachmentWrapper = document.getElementById("attachmentPreviewWrapper");
+        if (attachmentWrapper) {
+            attachmentWrapper.innerHTML = `
+                <label class="form-label">Please upload your attachment/s here:</label>
+                <a id="uploadAttachmentBtn" class="btn btn-main btn-md w-100">
+                    <i class="bi bi-upload me-2"></i> Upload Attachment/s
+                </a>
+            `;
+            rebindUploadButton();
+        }
+
+        const scanWrapper = document.getElementById("scanRFQPreviewWrapper");
+        if (scanWrapper) {
+            scanWrapper.innerHTML = `
+                <label class="form-label">Please scan your document/s here:</label>
+                <a id="openScanModalBtn" class="btn btn-main btn-md w-100">
+                    <i class="bi bi-camera me-2"></i> Scan Document
+                </a>
+            `;
+            rebindScanButton();
+        }
+    }
 
     function dataURLtoBlob(dataURL) {
         const arr = dataURL.split(',');
@@ -836,13 +989,90 @@ document.addEventListener("DOMContentLoaded", () => {
         while (n--) u8arr[n] = bstr.charCodeAt(n);
         return new Blob([u8arr], { type: mime });
     }
-    
+
     document.getElementById('rfqStatusOkBtn')?.addEventListener('click', () => {
         location.reload();
     });
 
-    
+    document.querySelectorAll('.org-name-input').forEach(orgInput => {
+        const wrapper = orgInput.closest('.position-relative');
+        const orgDropdown = wrapper.querySelector('.org-dropdown');
+        const orgIdInput = wrapper.parentElement.querySelector('.org-id-input');
 
+        let orgTimeout;
+
+        orgInput.addEventListener('input', () => {
+            const query = orgInput.value.trim();
+            orgIdInput.value = '';
+
+            if (!query) {
+                orgDropdown.classList.add('d-none');
+                orgDropdown.innerHTML = '';
+                return;
+            }
+
+            clearTimeout(orgTimeout);
+            orgTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/search-organizations?q=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+                    if (!data.success) return;
+
+                    orgDropdown.innerHTML = '';
+                    if (data.organizations.length === 0) {
+                        orgDropdown.classList.add('d-none');
+                        return;
+                    }
+
+                    data.organizations.forEach(org => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item list-group-item-action';
+                        li.textContent = org.org_name;
+                        li.dataset.orgId = org.org_id;
+                        li.dataset.address = org.org_address || '';
+                        li.dataset.institution = org.institution_type || '';
+
+                        li.addEventListener('click', () => {
+                            const container = orgInput.closest('.col-lg-6');
+
+                            const addressInput = container.querySelector(
+                                'input[name="organization_address"]'
+                            );
+                            const institutionSelect = container.querySelector(
+                                'select[name="institution"]'
+                            );
+
+                            orgInput.value = org.org_name;
+                            orgIdInput.value = org.org_id;
+
+                            if (addressInput) {
+                                addressInput.value = li.dataset.address;
+                            }
+
+                            if (institutionSelect) {
+                                institutionSelect.value = li.dataset.institution;
+                            }
+
+                            orgDropdown.classList.add('d-none');
+                        });
+
+                        orgDropdown.appendChild(li);
+                    });
+
+
+                    orgDropdown.classList.remove('d-none');
+                } catch (err) {
+                    console.error(err);
+                }
+            }, 300);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target)) {
+                orgDropdown.classList.add('d-none');
+            }
+        });
+    });
 
 });
 
